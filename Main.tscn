@@ -1,0 +1,31 @@
+[gd_scene load_steps=7 format=2]
+
+[ext_resource path="res://Prefabs/grid_open.tscn" type="PackedScene" id=1]
+[ext_resource path="res://Tetro.gd" type="Script" id=2]
+[ext_resource path="res://GridManager.gd" type="Script" id=3]
+[ext_resource path="res://Assets/Sprites/green_block.png" type="Texture" id=4]
+[ext_resource path="res://Prefabs/grid_filled.tscn" type="PackedScene" id=5]
+
+[sub_resource type="RectangleShape2D" id=1]
+extents = Vector2( 32, 32 )
+
+[node name="Root" type="Node2D"]
+
+[node name="MainCamera" type="Camera2D" parent="."]
+current = true
+script = ExtResource( 2 )
+
+[node name="GridManager" type="Node2D" parent="."]
+position = Vector2( -260, 128 )
+script = ExtResource( 3 )
+grid_open = ExtResource( 1 )
+grid_filled = ExtResource( 5 )
+
+[node name="green_block" type="Sprite" parent="."]
+position = Vector2( -149, 310 )
+texture = ExtResource( 4 )
+
+[node name="StaticBody2D" type="StaticBody2D" parent="green_block" groups=["draggable"]]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="green_block/StaticBody2D"]
+shape = SubResource( 1 )
