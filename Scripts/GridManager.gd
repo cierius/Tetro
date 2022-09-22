@@ -3,9 +3,10 @@ extends Node
 
 class Grid:
 	var grid = []
-	var rows = [[],[],[],[],[],[],[],[],[]]
-	var columns = [[],[],[],[],[],[],[],[],[]]
-	var boxes = [[],[],[],[],[],[],[],[],[]]
+	var r: Array = [Block,Block,Block,Block,Block,Block,Block,Block,Block]
+	var rows = [r, r, r, r, r, r, r, r, r]
+	var columns = [r, r, r, r, r, r, r, r, r]
+	var sub_grids = [[],[],[],[],[],[],[],[],[]]
 
 class Block:
 	var value: int
@@ -42,12 +43,24 @@ func _ready():
 			inst.position = Vector2(x*64, -y*64)
 			y_index += 1
 	
-	organize_grid()
+	#organize_grid()
 
 
 func organize_grid():
 	for i in g.grid:
-		g.columns[i.position.x/64].append(i)
-		g.rows[i.position.y/64].append(i)
+		print(i.position.x/64)
 		
-	print(g.columns[0])
+		g.columns[i.position.x/64].insert(int(i.position.y/64), i)
+		g.rows[i.position.y/64].insert(int(i.position.x/64), i)
+		
+		for y in range(3):
+			for x in range(3):
+				for spot_y in range(3):
+					for spot_x in range(3):
+						var grid_spot
+						
+						grid_spot = g.rows[(y-1)*(x-1)][(spot_y-1)*(spot_x-1)]
+						#print(grid_spot)
+						g.sub_grids[y*x].insert(spot_y*spot_x, grid_spot)
+		
+	print(len(g.rows[0]))
