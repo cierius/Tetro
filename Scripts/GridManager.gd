@@ -3,13 +3,14 @@ extends Node
 
 class Grid:
 	var grid = []
-	var r: Array = [Block,Block,Block,Block,Block,Block,Block,Block,Block]
-	var rows = [r, r, r, r, r, r, r, r, r]
-	var columns = [r, r, r, r, r, r, r, r, r]
+	var rows = [[],[],[],[],[],[],[],[],[]]
+	var columns = [[],[],[],[],[],[],[],[],[]]
 	var sub_grids = [[],[],[],[],[],[],[],[],[]]
+
 
 class Block:
 	var value: int
+	var pos: Vector2
 	var gameObject
 
 onready var g = Grid.new()
@@ -18,49 +19,59 @@ export var grid_open: PackedScene
 export var grid_filled: PackedScene
 
 func _ready():
-	var x_index = 0
-	var y_index = 0
+	generate_blank()
+	organize_grid()
 	
+
+
+func generate_blank():
 	for x in range(9):
-		x_index += 1
 		for y in range(9):
 			var block_inst = Block.new()
-			var inst
-			
-			if(round(rand_range(0, 1)) == 0):
-				inst = grid_open.instance()  
-			else:
-				inst = grid_filled.instance() 
-				var rand_num = rand_range(0, 9)
-				inst.get_node("./Label").text = str(round(rand_num)) 
-				block_inst.value = round(rand_num)
+			var inst = grid_open.instance()
 			
 			block_inst.gameObject = inst
-			g.grid.append(inst)
+			g.grid.append(block_inst)
 			
 			call_deferred("add_child", inst)
 			
+			block_inst.pos = Vector2(x*64, y*64)
 			inst.position = Vector2(x*64, -y*64)
-			y_index += 1
-	
-	#organize_grid()
 
 
 func organize_grid():
 	for i in g.grid:
-		print(i.position.x/64)
 		
-		g.columns[i.position.x/64].insert(int(i.position.y/64), i)
-		g.rows[i.position.y/64].insert(int(i.position.x/64), i)
+		g.columns[i.pos.x/64].insert(int(abs(i.pos.y/64)), i)
+		g.rows[abs(i.pos.y/64)].insert(int(i.pos.x/64), i)
 		
-		for y in range(3):
-			for x in range(3):
-				for spot_y in range(3):
-					for spot_x in range(3):
-						var grid_spot
-						
-						grid_spot = g.rows[(y-1)*(x-1)][(spot_y-1)*(spot_x-1)]
-						#print(grid_spot)
-						g.sub_grids[y*x].insert(spot_y*spot_x, grid_spot)
+		#Sub Grid X - 0
+		if(i.pos.x/64 >= 0 and i.pos.x/64 <= 2):
+			if(i.pos.y/64 >= 0 and i.pos.y/64 <= 2):
+				g.sub_grids[0].append(i)
+			elif(i.pos.y/64 >= 3 and i.pos.y/64 <= 5):
+				g.sub_grids[3].append(i)
+			elif(i.pos.y/64 >= 6 and i.pos.y/64 <= 8):
+				g.sub_grids[6].append(i)
 		
-	print(len(g.rows[0]))
+		#Sub Grid X - 1
+		elif(i.pos.x/64 >= 3 and i.pos.x/64 <= 5):
+			if(i.pos.y/64 >= 0 and i.pos.y/64 <= 2):
+				g.sub_grids[1].append(i)
+			elif(i.pos.y/64 >= 3 and i.pos.y/64 <= 5):
+				g.sub_grids[4].append(i)
+			elif(i.pos.y/64 >= 6 and i.pos.y/64 <= 8):
+				g.sub_grids[7].append(i)
+		
+		#Sub Grid X - 3
+		elif(i.pos.x/64 >= 6 and i.pos.x/64 <= 8):
+			if(i.pos.y/64 >= 0 and i.pos.y/64 <= 2):
+				g.sub_grids[2].append(i)
+			elif(i.pos.y/64 >= 3 and i.pos.y/64 <= 5):
+				g.sub_grids[5].append(i)
+			elif(i.pos.y/64 >= 6 and i.pos.y/64 <= 8):
+				g.sub_grids[8].append(i)
+
+
+func randomize_grid():
+	pass
