@@ -18,10 +18,15 @@ onready var g = Grid.new()
 export var grid_open: PackedScene
 export var grid_filled: PackedScene
 
+
+var grid_file = "res://Levels/level1.xml"
+
+var grid_contents = []
+
 func _ready():
 	generate_blank()
 	organize_grid()
-	
+	grid_contents = read_grid_file(1)
 
 
 func generate_blank():
@@ -73,5 +78,16 @@ func organize_grid():
 				g.sub_grids[8].append(i)
 
 
-func randomize_grid():
-	pass
+# This function opens the file number and then reads it into an array that is returned
+func read_grid_file(level):
+	var f = File.new()
+	var content = []
+	
+	f.open("res://Levels/level"+str(level)+".xml", File.READ)
+	
+	for i in range(9):
+		f.seek(i*19)
+		content.append(f.get_csv_line())
+	
+	print(str(content))
+	return content
